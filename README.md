@@ -16,7 +16,7 @@ Install the following application in your system :
 * pywal
 
 # Screenshots
-### Neofetch
+### Cava, NEOVIM, cmatrix
 ![Alt text](dwm_ricing/Busy.png)
-### VIM
+### DWM-status-bar
 ![Alt text](dwm_ricing/Empty.png)
