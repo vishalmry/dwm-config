@@ -1,0 +1,48 @@
+diff --git a/config.def.h b/config.def.h
+index 1c0b587..c7c55c9 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -84,6 +84,8 @@ static Key keys[] = {
+ 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+ 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+ 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
++    { MODKEY,                       XK_Right,     cycleNextTag,   {.i = 1  } },
++    { MODKEY,                       XK_Left,      cycleNextTag,   {.i = -1  } },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)
+diff --git a/dwm.c b/dwm.c
+index 4465af1..86691ba 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -233,6 +233,8 @@ static int xerror(Display *dpy, XErrorEvent *ee);
+ static int xerrordummy(Display *dpy, XErrorEvent *ee);
+ static int xerrorstart(Display *dpy, XErrorEvent *ee);
+ static void zoom(const Arg *arg);
++static void cycleNextTag(const Arg *a);
++static int shifttag(int);
+ 
+ /* variables */
+ static const char broken[] = "broken";
+@@ -2147,3 +2149,21 @@ main(int argc, char *argv[])
+ 	XCloseDisplay(dpy);
+ 	return EXIT_SUCCESS;
+ }
++
++void
++cycleNextTag(const Arg* arg) {
++    const Arg a = { .i = shifttag(arg->i) };
++
++	view(&a);
++}
++
++int
++shifttag(int dist) {
++	int seltags = selmon->tagset[selmon->seltags] & TAGMASK;
++
++	if(dist > 0) /* left circular shift */
++		seltags = (seltags << dist) | (seltags >> (LENGTH(tags) - dist));
++	else /* right circular shift */
++		seltags = (seltags >> (- dist)) | (seltags << (LENGTH(tags) + dist));
++	return seltags;
++}
